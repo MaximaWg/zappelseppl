@@ -1,2 +1,2 @@
 # zappelseppl
-Code für ein smartes Inlaysystem zur Stressmessung über Druck- und Bewegungssensoren im Fuß. Enthält Arduino-Sketch zur Datenerfassung via BLE und eine Python-GUI zur Live-Visualisierung (PyQt5 + pyqtgraph).
+Code for a smart insole system for stress detection using foot pressure and motion sensors. Includes an Arduino sketch for BLE-based data acquisition and a Python GUI for live visualization (PyQt5 + pyqtgraph).

@@ -1,4 +1,4 @@
-# Import notwendiger Bibliotheken
+# Import required libraries
 import sys
 import asyncio
 import threading
@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 from collections import deque
 
-# Matplotlib und Farbcodierung
+# Matplotlib and color mapping
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
@@ -16,60 +16,60 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
-# PyQt5 GUI und pyqtgraph für schnelle Plots
+# PyQt5 GUI and pyqtgraph for fast plotting
 from PyQt5 import QtGui
 from PyQt5 import QtGui
 from PyQt5 import QtCore
 from pyqtgraph.Qt import QtWidgets, QtCore
 import pyqtgraph as pg
 
-# 3D Visualisierung (Beschleunigungsvektor)
+# 3D visualization (acceleration vector)
 from vpython import vector, arrow, rate, cross, label
 
-# BLE-Kommunikation
+# BLE communication
 from bleak import BleakScanner, BleakClient
 
-# BLE-Geräteinfos
-CHAR_UUID = "2A56" # UUID der BLE-Charakteristik
-TARGET_NAME = "RP2040_Sensor" # Gesuchter Gerätename
+# BLE device info
+CHAR_UUID = "2A56"  # UUID of the BLE characteristic
+TARGET_NAME = "RP2040_Sensor"  # Target device name
 
-# CSV-Datei vorbereiten
-filename = datetime.now().strftime("%Y-%m-%d_%H-%M") + "_daten.csv"
+# Prepare CSV file
+filename = datetime.now().strftime("%Y-%m-%d_%H-%M") + "_data.csv"
 csv_file = open(filename, mode='w', newline='')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(["timestamp", "ax", "ay", "az", "r1", "r2", "r3"])
 
-# VPython: 3D-Pfeil für Beschleunigung
+# VPython: 3D arrow for acceleration
 accel_arrow = arrow(pos=vector(0, 0, 0), axis=vector(0, 0, 0), shaftwidth=0.05, color=vector(0.2, 0.6, 1))
 accel_label = label(pos=vector(0, 0.4, 0), text="Acceleration", height=16, border=4,
                     box=False, color=vector(0.2, 0.6, 1))
 
-# Rotationskalibrierung
+# Rotation calibration
 rotation_axis = vector(1, 0, 0)
 rotation_angle = 0
 calibrated = False
 
-# Matplotlib: Heatmap-Setup
-sensor_positions = {'Ferse': (0.5, 0.25), 'MT1': (0.38, 1.0), 'MT5': (0.62, 1.0)}
+# Matplotlib: Heatmap setup
+sensor_positions = {'Heel': (0.5, 0.25), 'MT1': (0.38, 1.0), 'MT5': (0.62, 1.0)}
 sensor_circles = {}
 fig, heat_ax = plt.subplots(figsize=(4, 8))
 canvas = FigureCanvas(fig)
 
-# Farbverlauf für Heatmap
+# Color gradient for heatmap
 color_gradient = LinearSegmentedColormap.from_list("custom_redscale",
     ["lightgray", "yellow", "orange", "red", "darkred"])
 
 def norm_force(r_ohm):
-    # Normierte Kraftberechnung
+    # Normalize resistance to force-like value
     if r_ohm <= 0 or np.isnan(r_ohm): return 0.0
     return np.clip(8000 / r_ohm, 0.0, 1.0)
 
 def force_color(norm_val):
-    # Gibt passende Farbe zur normierten Kraft
+    # Return corresponding color for normalized force
     return color_gradient(norm_val)
 
 def draw_foot_shape():
-    # Fußumriss definieren
+    # Define foot outline
     outline = [(0.40, 0.00), (0.35, 0.10), (0.30, 0.25), (0.25, 0.45),
                (0.20, 0.70), (0.18, 0.95), (0.20, 1.20), (0.28, 1.35),
                (0.35, 1.45), (0.43, 1.50), (0.50, 1.52), (0.57, 1.50),
@@ -79,7 +79,7 @@ def draw_foot_shape():
     poly = patches.Polygon(outline, closed=True, color='lightgray', zorder=0)
     heat_ax.add_patch(poly)
 
-# Heatmap vorbereiten
+# Prepare heatmap
 def setup_heatmap():
     heat_ax.clear()
     draw_foot_shape()
@@ -94,10 +94,10 @@ def setup_heatmap():
     heat_ax.axis('off')
     heat_ax.set_title("FSR Shoe Insoles", fontsize=14)
 
-    # Farbskala
+    # Add color scale
     norm = Normalize(vmin=0.0, vmax=1.0)
     sm = ScalarMappable(norm=norm, cmap=color_gradient)
-    sm.set_array([])  # Dummy-Daten
+    sm.set_array([])  # Dummy data
     cbar = fig.colorbar(sm, ax=heat_ax, fraction=0.046, pad=0.04)
     cbar.set_label("Normalized Resistance", fontsize=12)
 
@@ -105,17 +105,17 @@ setup_heatmap()
 fig.tight_layout()
 canvas.draw()
 
-# PyQt GUI Setup
+# PyQt GUI setup
 app = QtWidgets.QApplication(sys.argv)
 main_win = QtWidgets.QMainWindow()
 central_widget = QtWidgets.QWidget()
 layout = QtWidgets.QGridLayout()
 central_widget.setLayout(layout)
 main_win.setCentralWidget(central_widget)
-main_win.setWindowTitle("Live ACC, FSR + Fußsohle (BLE)")
+main_win.setWindowTitle("Live ACC, FSR + Foot Sole (BLE)")
 main_win.resize(1000, 600)
 
-# Beschleunigungsgraph
+# Acceleration plot
 acc_plot = pg.PlotWidget(title="Accelerometer (m/s²)")
 acc_plot.setBackground('w')
 acc_plot.setYRange(-20, 20)
@@ -135,7 +135,7 @@ acc_y = acc_plot.plot(pen=pg.mkPen(color=(230, 159, 0), width=3), name='Ay')
 acc_z = acc_plot.plot(pen=pg.mkPen(color=(86, 180, 233), width=3), name='Az')
 layout.addWidget(acc_plot, 0, 0)
 
-# FSR-Graph
+# FSR plot
 fsr_plot = pg.PlotWidget(title="FSR")
 fsr_plot.setBackground('w')
 fsr_plot.setYRange(0, 1.1)
@@ -148,21 +148,21 @@ fsr_plot.getAxis('left').setStyle(tickFont=tick_font)
 fsr_plot.getAxis('bottom').setStyle(tickFont=tick_font)
 
 fsr_plot.addLegend(labelTextSize='12pt')
-fsr_1 = fsr_plot.plot(pen=pg.mkPen(color=(204, 121, 167), width=3), name='Ferse')
+fsr_1 = fsr_plot.plot(pen=pg.mkPen(color=(204, 121, 167), width=3), name='Heel')
 fsr_2 = fsr_plot.plot(pen=pg.mkPen(color=(0, 158, 115), width=3), name='MT1')
 fsr_3 = fsr_plot.plot(pen=pg.mkPen(color=(50, 50, 50), width=3), name='MT5')
 layout.addWidget(fsr_plot, 1, 0)
 
-# Heatmap einfügen
+# Insert heatmap
 layout.addWidget(canvas, 0, 1, 2, 2)
 
-# Datenpuffer vorbereiten
+# Prepare data buffers
 buffer_size = 300
 acc_buffer = [deque([0]*buffer_size, maxlen=buffer_size) for _ in range(3)]
 fsr_buffer = [deque([0]*buffer_size, maxlen=buffer_size) for _ in range(3)]
 x_vals = deque(np.linspace(-buffer_size/10, 0, buffer_size), maxlen=buffer_size)
 
-# BLE-Daten verarbeiten
+# Process BLE data
 def process_ble_data(data_str):
     global rotation_angle, rotation_axis, calibrated
     parts = data_str.strip().split('\t')
@@ -178,7 +178,7 @@ def process_ble_data(data_str):
     csv_writer.writerow([timestamp, ax, ay, az, r1, r2, r3])
     csv_file.flush()
 
-    # Beschleunigungsvektor rotieren
+    # Rotate acceleration vector
     raw_vec = vector(ax, ay, az)
     if not calibrated:
         initial_vector = raw_vec.norm()
@@ -191,13 +191,13 @@ def process_ble_data(data_str):
     rotated_vec = raw_vec.rotate(angle=rotation_angle, axis=rotation_axis)
     accel_arrow.axis = rotated_vec * 0.2
 
-    # Heatmap einfärben
-    fsr_data = {'Ferse': r1, 'MT1': r2, 'MT5': r3}
+    # Colorize heatmap
+    fsr_data = {'Heel': r1, 'MT1': r2, 'MT5': r3}
     for name, r_val in fsr_data.items():
         sensor_circles[name].set_facecolor(force_color(norm_force(r_val)))
     canvas.draw()
 
-    # Graph aktualisieren
+    # Update graphs
     for i, val in enumerate([ax, ay, az]):
         acc_buffer[i].append(val)
     for i, val in enumerate([r1, r2, r3]):
@@ -213,29 +213,29 @@ def process_ble_data(data_str):
 
     QtWidgets.QApplication.processEvents()
 
-# BLE-Verbindung aufbauen
+# Establish BLE connection
 async def main_ble():
-    print("Suche nach BLE-Geräten...")
+    print("Searching for BLE devices...")
     devices = await BleakScanner.discover()
     addr = next((d.address for d in devices if TARGET_NAME in (d.name or "")), None)
     if not addr:
-        print("Zielgerät nicht gefunden.")
+        print("Target device not found.")
         return
-    print(f"Verbinde mit {addr}...")
+    print(f"Connecting to {addr}...")
     async with BleakClient(addr) as client:
-        print("Verbunden, Kalibrierung läuft, bitte ruhig halten.")
+        print("Connected, calibration in progress. Please remain still.")
         def callback(_, data):
             process_ble_data(data.decode('utf-8'))
         await client.start_notify(CHAR_UUID, callback)
         while True:
             await asyncio.sleep(0.01)
 
-# BLE-Thread starten
+# Start BLE thread
 def start_ble_thread():
     asyncio.run(main_ble())
 
 threading.Thread(target=start_ble_thread, daemon=True).start()
 
-# GUI starten
+# Launch GUI
 main_win.show()
 sys.exit(app.exec_())

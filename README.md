@@ -77,6 +77,7 @@ Located in the **python/** folder:
 - Open the appropriate **.ino** file in the Arduino IDE and upload it to the Arduino Nano RP2040 Connect.
   - Use 3fsr_und_IMU.ino for serial mode.
   - Use 3fsr_und_IMU_BLE.ino for Bluetooth mode.
+
 **2. Start Python Visualization**
 - Install required dependencies.
 - Then run the desired Python file.

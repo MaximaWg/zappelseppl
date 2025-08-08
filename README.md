@@ -98,4 +98,4 @@ This repository is part of a university project and not currently licensed for c
 
 # Authors
 
-Lena Sandig und Maxima Wiegels
+Lena Sandig and Maxima Wiegels

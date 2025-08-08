@@ -16,7 +16,7 @@ This repository contains the full code for the **ZappelSeppl** project – a sma
   - Force heatmap drawn over a stylized foot
 
 ## Repository Structure
-
+```
 zappelseppl/
 ├── arduino/
 │   ├── 3fsr_and_IMU.ino         ← Arduino sketch for USB serial transmission
@@ -27,6 +27,7 @@ zappelseppl/
 │   └── visualizer_ble.py            ← Python GUI for BLE-based data stream
 │
 └── README.md                        ← This file
+```
 
 ## Requirements
 
@@ -36,7 +37,7 @@ zappelseppl/
 - Python (Python 3.8) packages: `bleak` (for BLE only), `pyqtgraph`, `matplotlib`, `pandas`, `scipy`, `vpython`, `pyqt5`
 
 ## Arduino Sketches
-located in the **arduino/** folder:
+Located in the **arduino/** folder:
 - **3fsr_and_IMU.ino**
   - Transmits sensor data (acceleration and FSR resistance) via serial over USB.
   - Suitable for direct connection to a PC or Raspberry Pi using USB.
@@ -46,7 +47,7 @@ located in the **arduino/** folder:
   - Advertises itself as RP2040_Sensor.
 
 ## Python Visualizations
-located in the **python/** folder:
+Located in the **python/** folder:
 - **visualizer_usb.py**
   - Connects to the microcontroller via a specified COM port (e.g., COM7).
   - Parses tab-separated sensor data via USB serial.

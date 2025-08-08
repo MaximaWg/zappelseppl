@@ -20,7 +20,7 @@ This repository contains the full code for the **ZappelSeppl** project – a sma
 zappelseppl/
 ├── arduino/
 │   ├── 3fsr_and_IMU.ino         ← Arduino sketch for USB serial transmission
-│   └── 3fsr_and_IMU_BLE.ino         ← Arduino sketch for BLE (Bluetooth Low Energy)
+│   └── 3fsr_and_IMU_BLE.ino         ← Arduino sketch for BLE 
 │
 ├── python/
 │   ├── visualizer.py            ← Python GUI for USB-based data stream
